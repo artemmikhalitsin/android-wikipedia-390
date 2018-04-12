@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 
 import org.wikipedia.travel.datepicker.DateFragment;
 import org.wikipedia.travel.destinationpicker.DestinationFragment;
+import org.wikipedia.travel.landmarkpicker.LandmarkCard;
 import org.wikipedia.travel.landmarkpicker.LandmarkFragment;
 import org.wikipedia.travel.trip.Trip;
 import org.wikipedia.travel.trip.TripFragment;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Artem on 2018-03-02.
@@ -104,8 +106,9 @@ public class PlannerFragmentPagerAdapter extends FragmentStatePagerAdapter {
         notifyDataSetChanged();
     }
 
-    private void addLandmarksFragment(String destinationName) {
-        landmarksFragment = LandmarkFragment.newInstance(destinationName);
+    private void addLandmarksFragment(String destinationName, Trip trip) {
+        List<LandmarkCard> landmarks = trip.getDestination().getLandmarks();
+        landmarksFragment = LandmarkFragment.newInstance(destinationName, landmarks);
         numPages++;
         notifyDataSetChanged();
     }
@@ -123,7 +126,7 @@ public class PlannerFragmentPagerAdapter extends FragmentStatePagerAdapter {
             addDateFragment(trip);
         }
         if(trip.getTripDepartureDate() != null) {
-            addLandmarksFragment(destinationName);
+            addLandmarksFragment(destinationName, trip);
         }
     }
 

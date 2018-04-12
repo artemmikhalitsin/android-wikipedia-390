@@ -29,7 +29,6 @@ import org.wikipedia.nearby.NearbyClient;
 import org.wikipedia.nearby.NearbyPage;
 import org.wikipedia.nearby.NearbyResult;
 import org.wikipedia.page.PageTitle;
-import org.wikipedia.travel.MainPlannerFragment;
 import org.wikipedia.util.FeedbackUtil;
 import org.wikipedia.util.ThrowableUtil;
 import org.wikipedia.util.log.L;
@@ -40,21 +39,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import retrofit2.Call;
 
-/**
- * Created by mnhn3 on 2018-03-04.
- */
 
 public class LandmarkFragment extends Fragment implements View.OnClickListener {
+
     public interface Callback {
         void onLoadPage(PageTitle title, HistoryEntry entry);
         String onRequestOpenDestinationName();
-        void onSave(List<LandmarkCard> saveList);
+        void onSaveLandmark(List<LandmarkCard> saveList);
     }
     private Unbinder unbinder;
     private RecyclerView.LayoutManager linearLayoutManager;
@@ -69,11 +68,12 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
     @BindView(R.id.landmark_view_recycler) RecyclerView recyclerView;
     @BindView(R.id.landmark_country_view_text) TextView destinationText;
 
-    public static LandmarkFragment newInstance(String destinationName) {
+    public static LandmarkFragment newInstance(String destinationName, List<LandmarkCard> landmarkCards) {
         Bundle args = new Bundle();
         args.putString("DESTINATION", destinationName);
 
         LandmarkFragment fragment = new LandmarkFragment();
+        fragment.selectedLandmarks = landmarkCards;
         fragment.setArguments(args);
         return fragment;
     }
@@ -99,7 +99,6 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setAdapter(adapter);
         retrieveArticles(destinationName);
-        selectedLandmarks = new ArrayList<LandmarkCard>();
         return view;
     }
 
@@ -119,12 +118,11 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
         adapter.setLandmarkCardList(landmarks);
     }
 
-
     @Override
     public void onClick(View v) {
         String message = "Your trip has been saved.";
         FeedbackUtil.showMessage(getActivity(), message);
-        getCallback().onSave(selectedLandmarks);
+        getCallback().onSaveLandmark(selectedLandmarks);
     }
 
 
@@ -148,7 +146,7 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
     private void onSave(List<LandmarkCard> saveList){
         Callback callback = getCallback();
         if (callback != null) {
-            callback.onSave(saveList);
+            callback.onSaveLandmark(saveList);
         }
     }
 
@@ -160,6 +158,7 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
             LandmarkCard card = new LandmarkCard(
                 key, "", landMarkList.get(key)
             );
+            card.setChecked(selectedLandmarks.contains(key));
             cardsList.add(card);
         }
         adapter.setLandmarkCardList(cardsList);
@@ -319,11 +318,13 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
                         }
                         break;
                 }
+                getCallback().onSaveLandmark(selectedLandmarks);
             }
 
             public void bindItem(LandmarkCard landmarkCard) {
                 textViewTitle.setText(landmarkCard.getTitle());
                 textViewDesc.setText(landmarkCard.getDesc());
+                checkBox.setChecked(landmarkCard.getChecked());
             }
 
         }

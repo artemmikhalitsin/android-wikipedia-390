@@ -206,10 +206,16 @@ public class MainPlannerFragment extends Fragment implements BackPressedHandler,
     }
 
     //saves landmarks into trips, called in onclick
-    public void onSave(List<LandmarkCard> saveList) {
+    @Override
+    public void onSaveLandmark(List<LandmarkCard> saveList) {
+        if (openTrip.getDestination() == null) return;
+        openTrip.getDestination().getDestinationPlacesToVisit().clear();
+        openTrip.getDestination().getDestinationPlacesToVisit().addAll(saveList);
+        /*
         for (LandmarkCard card : saveList) {
             openTrip.getDestination().getDestinationPlacesToVisit().add(card);
         }
+        */
     }
 
     @Override
@@ -396,7 +402,7 @@ public class MainPlannerFragment extends Fragment implements BackPressedHandler,
 
     public void setDestination(String destinationName) {
         if (openTrip.getDestination() == null) {
-            openTrip.setDestination(new Trip.Destination(destinationName));
+            openTrip.setDestination(new Trip.Destination(new ArrayList<LandmarkCard>(), destinationName));
         } else {
             openTrip.getDestination().setDestinationName(destinationName);
         }

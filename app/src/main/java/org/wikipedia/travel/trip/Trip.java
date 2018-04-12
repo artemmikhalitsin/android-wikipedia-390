@@ -57,7 +57,7 @@ public class Trip {
     }
 
     public Trip() {
-        this("", new Destination(""), new DeprecatedDateAdapter());
+        this("", new Destination(new ArrayList<LandmarkCard>(), ""), new DeprecatedDateAdapter());
     }
 
     //Setters and getters for the trip's id
@@ -157,9 +157,12 @@ public class Trip {
         }
 
         //Parametrized constructor for a destination, for storage in database
-        public Destination(String destinationName) {
+        /*
+        public Destination(String destinationName)
+        {
+            this.landmarks = new ArrayList<LandmarkCard>();
             this.destinationName = destinationName;
-        }
+        }*/
 
         //Getter method for the list of landmarks that a destination has
         @NonNull
@@ -192,6 +195,10 @@ public class Trip {
             return (!(this.landmarks.isEmpty()) && this.landmarks != null);
         }
 
+        @Nullable
+        public List<LandmarkCard> getLandmarks() {
+            return landmarks;
+        }
     }
 
 }
