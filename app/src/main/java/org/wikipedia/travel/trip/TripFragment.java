@@ -172,7 +172,7 @@ public class TripFragment extends Fragment{
         }
     }
 
-    //Individual rows that hold information about a trip
+    // Individual rows that hold information about a trip
     public final class TripItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private int index;

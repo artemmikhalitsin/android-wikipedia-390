@@ -163,7 +163,7 @@ public class Trip {
 
         //Getter method for the list of landmarks that a destination has
         @NonNull
-        public List<LandmarkCard> getDestinationPlacesToVisit() {
+        public List<LandmarkCard> getDestinationLandmarks() {
             return (this.landmarks != null) ? this.landmarks : Collections.emptyList();
         }
 
@@ -188,7 +188,7 @@ public class Trip {
         }
 
         //Checking if the destination actually has places to visit
-        public boolean areTherePlacesToVisitForDestination() {
+        public boolean landmarksExistForDestination() {
             return (!(this.landmarks.isEmpty()) && this.landmarks != null);
         }
 

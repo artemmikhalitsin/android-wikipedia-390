@@ -128,7 +128,6 @@ public class MainPlannerFragment extends Fragment implements BackPressedHandler,
     /*
         Child fragment callbacks
      */
-
     @Override
     public void onNewTrip() {
         CallbackTask.execute(() -> TripDbHelper.instance().createList(), new CallbackTask.DefaultCallback<Trip>() {
@@ -191,7 +190,7 @@ public class MainPlannerFragment extends Fragment implements BackPressedHandler,
     @Override
     public void onPlaceSelected(Place destination) {
         openTrip.setDestinationName((String) destination.getAddress());
-        saveDestination();
+        saveDestinationSearch();
     }
 
     @Override
@@ -208,7 +207,7 @@ public class MainPlannerFragment extends Fragment implements BackPressedHandler,
     //saves landmarks into trips, called in onclick
     public void onSave(List<LandmarkCard> saveList) {
         for (LandmarkCard card : saveList) {
-            openTrip.getDestination().getDestinationPlacesToVisit().add(card);
+            openTrip.getDestination().getDestinationLandmarks().add(card);
         }
     }
 
@@ -256,7 +255,7 @@ public class MainPlannerFragment extends Fragment implements BackPressedHandler,
         });
     }
 
-    private void saveDestination() {
+    private void saveDestinationSearch() {
         CallbackTask.execute(() -> DestinationDbHelper.getInstance().createList(openTrip.getDestination()), new CallbackTask.DefaultCallback<Object>() {
             @Override
             public void success(Object o) {
@@ -350,7 +349,6 @@ public class MainPlannerFragment extends Fragment implements BackPressedHandler,
     private void goToHomePage() {
         goToPage(0);
         bSave.setActivated(true);
-        //TODO: Prompt user to save unsaved changes
         openTrip = null;
     }
 

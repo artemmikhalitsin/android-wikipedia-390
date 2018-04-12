@@ -64,7 +64,7 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
     private NearbyResult lastResult;
 
     //Landmarks selected (checked) by the user
-    private List<LandmarkCard> selectedLandmarks;
+    private List<LandmarkCard> selectedLandmarks = new ArrayList<LandmarkCard>();
 
     @BindView(R.id.landmark_view_recycler) RecyclerView recyclerView;
     @BindView(R.id.landmark_country_view_text) TextView destinationText;
@@ -99,7 +99,6 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setAdapter(adapter);
         retrieveArticles(destinationName);
-        selectedLandmarks = new ArrayList<LandmarkCard>();
         return view;
     }
 
@@ -144,7 +143,7 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
             return "";
     }
 
-    //Saves list of selectedLandmarks
+    //Saves list of landmarks, included those checked or not checked
     private void onSave(List<LandmarkCard> saveList){
         Callback callback = getCallback();
         if (callback != null) {
@@ -156,12 +155,25 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
     private void fillList(Map<String, String> landMarkList){
         //clear the list to prevent duplicates
         cardsList.clear();
+
         for (String key : landMarkList.keySet()) {
             LandmarkCard card = new LandmarkCard(
                 key, "", landMarkList.get(key)
             );
             cardsList.add(card);
         }
+
+        //Check off landmark cards in the list that were previously selected for a trip and contained within
+        //the selectedLandmarks list
+        if (selectedLandmarks != null && cardsList != null) {
+            for (int i = 0; i < cardsList.size(); i++) {
+                for (int j = 0; j < selectedLandmarks.size(); j++) {
+                    if (cardsList.get(i).getTitle().equals(selectedLandmarks.get(j).getTitle()))
+                        cardsList.get(i).setChecked(true);
+                }
+            }
+        }
+
         adapter.setLandmarkCardList(cardsList);
     }
 
@@ -179,7 +191,7 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
         double lat = 0;
         double longi = 0;
         Geocoder gc = new Geocoder(getContext());
-        //Based on location, geocoder gets corresponding lattitude and longitude
+        //Based on location, geocoder gets corresponding latitude and longitude
         try {
             List<Address> addresses= gc.getFromLocationName(location, 5);
             List<LatLng> ll = new ArrayList<LatLng>(addresses.size()); // A list to save the coordinates if they are available
@@ -194,7 +206,7 @@ public class LandmarkFragment extends Fragment implements View.OnClickListener {
         }
         NearbyClient client = new NearbyClient();
         WikiSite wiki = WikipediaApp.getInstance().getWikiSite();
-        //Passing in longitude and lattiude, retrieve relevan articles nearby
+        //Passing in longitude and latitude, retrieve relevant articles nearby
         client.request(wiki, lat,longi, 5000,
                 new NearbyClient.Callback() {
                     @Override public void success(@NonNull Call<MwQueryResponse> call,
