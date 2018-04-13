@@ -157,12 +157,11 @@ public class Trip {
         }
 
         //Parametrized constructor for a destination, for storage in database
-        /*
         public Destination(String destinationName)
         {
             this.landmarks = new ArrayList<LandmarkCard>();
             this.destinationName = destinationName;
-        }*/
+        }
 
         //Getter method for the list of landmarks that a destination has
         @NonNull
